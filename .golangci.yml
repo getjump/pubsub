@@ -1,0 +1,5 @@
+go: '1.18'
+linters:
+  enable-all: true
+
+linters-settings:

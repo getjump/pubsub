@@ -1,0 +1,54 @@
+syntax = "proto3";
+package pubsub;
+
+option go_package = "pubsub/proto";
+
+import "google/protobuf/any.proto";
+
+service PubSub {
+    rpc Publish(PublishRequest) returns (PublishResponse) {}
+    rpc Subscribe(SubscribeRequest) returns (stream PubSubMessage) {}
+    rpc ValidateRetrieval(stream ValidateRetrievalRequest) returns (stream ValidateRetrievalResponse) {}
+}
+
+message PubSubMessage {
+    string topic = 1;
+    string id = 2;
+    optional bool validationRequired = 3;
+    google.protobuf.Any body = 4;
+}
+
+message PublishRequest {
+    enum PublishMethod {
+        SYNC = 0;
+        ASYNC = 1;
+    };
+    PublishMethod publishMethod = 1;
+    PubSubMessage message = 2;
+};
+
+message PublishResponse {
+    enum PublishStatus {
+        FAILED = 0;
+        OK = 1;
+    };
+    PublishStatus publishStatus = 1;
+};
+
+message SubscribeRequest {
+    string topic = 1;
+    string clientId = 2;
+};
+
+message ValidateRetrievalRequest {
+    string clientId = 1;
+    PubSubMessage message = 2;
+}
+
+message ValidateRetrievalResponse {
+    enum RetrievalStatus {
+        FAILED = 0;
+        OK = 1;
+    };
+    RetrievalStatus retrievalStatus = 1;
+};

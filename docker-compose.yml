@@ -1,0 +1,35 @@
+version: 'latest'
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+  pubsub:
+    build:
+      context: ./pubsub-server
+      dockerfile: Dockerfile
+      container_name: pubsub
+      restart: always
+      ports:
+        - "${APP_GRPC_PORT}"
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - ${PROMETHEUS_PORT}:9090
+    restart: always
+
+volumes:
+  grafana-storage:
+  prometheus-data:

@@ -1,0 +1,10 @@
+syntax = "proto3";
+package pubsub_client;
+
+option go_package = "pubsub/proto";
+
+message Signal {}
+
+message HelloWorld {
+    string test = 1;
+}
